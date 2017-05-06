@@ -75,20 +75,22 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Assets\HexMap\EdgeVertices.cs" />
-    <Compile Include="Assets\HexMap\HexCell.cs" />
-    <Compile Include="Assets\HexMap\HexCoordinates.cs" />
-    <Compile Include="Assets\HexMap\HexDirection.cs" />
-    <Compile Include="Assets\HexMap\HexEdgeType.cs" />
-    <Compile Include="Assets\HexMap\HexGrid.cs" />
-    <Compile Include="Assets\HexMap\HexGridChunk.cs" />
-    <Compile Include="Assets\HexMap\HexMapCamera.cs" />
-    <Compile Include="Assets\HexMap\HexMapEditor.cs" />
-    <Compile Include="Assets\HexMap\HexMesh.cs" />
-    <Compile Include="Assets\HexMap\HexMetrics.cs" />
+    <Compile Include="Assets\HexMap\Scripts\EdgeVertices.cs" />
+    <Compile Include="Assets\HexMap\Scripts\HexCell.cs" />
+    <Compile Include="Assets\HexMap\Scripts\HexCoordinates.cs" />
+    <Compile Include="Assets\HexMap\Scripts\HexDirection.cs" />
+    <Compile Include="Assets\HexMap\Scripts\HexEdgeType.cs" />
+    <Compile Include="Assets\HexMap\Scripts\HexGrid.cs" />
+    <Compile Include="Assets\HexMap\Scripts\HexGridChunk.cs" />
+    <Compile Include="Assets\HexMap\Scripts\HexMapCamera.cs" />
+    <Compile Include="Assets\HexMap\Scripts\HexMapEditor.cs" />
+    <Compile Include="Assets\HexMap\Scripts\HexMesh.cs" />
+    <Compile Include="Assets\HexMap\Scripts\HexMetrics.cs" />
+    <Compile Include="Assets\HexMap\Scripts\ListPool.cs" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="Assets\VertexColors.shader" />
+    <None Include="Assets\HexMap\Shaders\River.shader" />
+    <None Include="Assets\HexMap\Shaders\VertexColors.shader" />
   </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\SyntaxTree\UnityVS\2015\UnityVS.CSharp.targets" />
 </Project>
