@@ -20,9 +20,12 @@ public class HexGrid : MonoBehaviour {
 
     public Texture2D noiseSource;
 
+    public int seed;
+
     void Awake()
     {
         HexMetrics.noiseSource = noiseSource;
+        HexMetrics.InitializeHashGrid(seed);
 
         cellCountX = chunkCountX * HexMetrics.chunkSizeX;
         cellCountZ = chunkCountZ * HexMetrics.chunkSizeZ;
@@ -33,7 +36,11 @@ public class HexGrid : MonoBehaviour {
 
     void OnEnable()
     {
-        HexMetrics.noiseSource = noiseSource;
+        if (!HexMetrics.noiseSource)
+        {
+            HexMetrics.noiseSource = noiseSource;
+            HexMetrics.InitializeHashGrid(seed);
+        }
     }
 
     void CreateChunks()

@@ -92,11 +92,8 @@ public class HexCell : MonoBehaviour {
             return (waterLevel + HexMetrics.waterElevationOffset) * HexMetrics.elevationStep;
         }
     }
-
     #endregion
-
-
-
+    
     #region River Properties
     private bool hasIncomingRiver, hasOutgoingRiver;
     private HexDirection incomingRiver, outgoingRiver;
@@ -340,6 +337,50 @@ public class HexCell : MonoBehaviour {
         return difference >= 0 ? difference : -difference;
     }
 
+    #endregion
+
+    #region Feature Properties
+    private int urbanLevel;
+    public int UrbanLevel
+    {
+        get { return urbanLevel; }
+        set
+        {
+            if (urbanLevel != value)
+            {
+                urbanLevel = value;
+                RefreshSelfOnly();
+            }
+        }
+    }
+
+    private int farmLevel;
+    public int FarmLevel
+    {
+        get { return farmLevel; }
+        set
+        {
+            if (farmLevel != value)
+            {
+                farmLevel = value;
+                RefreshSelfOnly();
+            }
+        }
+    }
+
+    private int plantLevel;
+    public int PlantLevel
+    {
+        get { return plantLevel; }
+        set
+        {
+            if (plantLevel != value)
+            {
+                plantLevel = value;
+                RefreshSelfOnly();
+            }
+        }
+    }
     #endregion
 
     void Refresh()
