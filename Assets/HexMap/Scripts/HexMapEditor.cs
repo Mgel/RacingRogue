@@ -13,13 +13,16 @@ public class HexMapEditor : MonoBehaviour {
     private bool applyElevation = true;
     private int activeElevation;
 
+    private bool applyWaterLevel = true;
+    private int activeWaterLevel;
+
     private int brushSize;
 
     private enum OptionalToggle
     {
         Ignore, Add, Remove
     }
-    private OptionalToggle riverMode;
+    private OptionalToggle riverMode, roadMode;
 
     bool isDrag;
     HexDirection dragDirection;
@@ -106,12 +109,28 @@ public class HexMapEditor : MonoBehaviour {
             {
                 cell.RemoveRiver();
             }
-            else if (isDrag && riverMode == OptionalToggle.Add)
+            if (roadMode == OptionalToggle.Remove)
+            {
+                cell.RemoveRoads();
+            }
+            if (applyWaterLevel)
+            {
+                cell.WaterLevel = activeWaterLevel;
+            }
+
+            else if (isDrag)
             {
                 HexCell otherCell = cell.GetNeighbor(dragDirection.Opposite());
                 if (otherCell)
                 {
-                    otherCell.SetOutgoingRiver(dragDirection);
+                    if (riverMode == OptionalToggle.Add)
+                    {
+                        otherCell.SetOutgoingRiver(dragDirection);
+                    }
+                    if (roadMode == OptionalToggle.Add)
+                    {
+                        otherCell.AddRoad(dragDirection);
+                    }
                 }                
             }
         }
@@ -166,5 +185,21 @@ public class HexMapEditor : MonoBehaviour {
     {
         riverMode = (OptionalToggle)mode;
     }
+
+    public void SetRoadMode(int mode)
+    {
+        roadMode = (OptionalToggle)mode;
+    }
+
+    public void SetWaterLevel(float level)
+    {
+        activeWaterLevel = (int)level;
+    }
+
+    public void SetApplyWaterLevel(bool toggle)
+    {
+        applyWaterLevel = toggle;
+    }
+
     #endregion
 }
