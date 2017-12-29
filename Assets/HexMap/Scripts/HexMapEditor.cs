@@ -16,8 +16,8 @@ public class HexMapEditor : MonoBehaviour {
     private bool applyWaterLevel = true;
     private int activeWaterLevel;
 
-    private bool applyUrbanLevel, applyFarmLevel, applyPlantLevel;
-    private int activeUrbanLevel, activeFarmLevel, activePlantLevel;
+    private bool applyUrbanLevel, applyFarmLevel, applyPlantLevel, applySpecialIndex;
+    private int activeUrbanLevel, activeFarmLevel, activePlantLevel, activeSpecialIndex;
 
     private int brushSize;
 
@@ -25,7 +25,7 @@ public class HexMapEditor : MonoBehaviour {
     {
         Ignore, Add, Remove
     }
-    private OptionalToggle riverMode, roadMode;
+    private OptionalToggle riverMode, roadMode, walledMode;
 
     bool isDrag;
     HexDirection dragDirection;
@@ -116,9 +116,17 @@ public class HexMapEditor : MonoBehaviour {
             {
                 cell.RemoveRoads();
             }
+            if (walledMode != OptionalToggle.Ignore)
+            {
+                cell.Walled = walledMode == OptionalToggle.Add;
+            }
             if (applyWaterLevel)
             {
                 cell.WaterLevel = activeWaterLevel;
+            }
+            if (applySpecialIndex)
+            {
+                cell.SpecialIndex = activeSpecialIndex;
             }
             if (applyUrbanLevel)
             {
@@ -206,6 +214,11 @@ public class HexMapEditor : MonoBehaviour {
         roadMode = (OptionalToggle)mode;
     }
 
+    public void SetWalledMode(int mode)
+    {
+        walledMode = (OptionalToggle)mode;
+    }
+
     public void SetWaterLevel(float level)
     {
         activeWaterLevel = (int)level;
@@ -245,5 +258,16 @@ public class HexMapEditor : MonoBehaviour {
     {
         activePlantLevel = (int)level;
     }
+
+    public void SetApplySpecialIndex(bool toggle)
+    {
+        applySpecialIndex = toggle;
+    }
+
+    public void SetSpecialIndex(float index)
+    {
+        activeSpecialIndex = (int)index;
+    }
+
     #endregion
 }

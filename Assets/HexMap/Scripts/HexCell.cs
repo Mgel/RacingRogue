@@ -237,10 +237,12 @@ public class HexCell : MonoBehaviour {
 
         hasOutgoingRiver = true;
         outgoingRiver = direction;
+        specialIndex = 0;
 
         neighbor.RemoveIncomingRiver();
         neighbor.hasIncomingRiver = true;
         neighbor.incomingRiver = direction.Opposite();
+        neighbor.specialIndex = 0;
 
         SetRoad((int)direction, false);
     }
@@ -259,29 +261,6 @@ public class HexCell : MonoBehaviour {
         }
     }
 
-    #endregion
-
-    #region Neighbor/Edges
-    public HexCell GetNeighbor(HexDirection direction)
-    {
-        return neighbors[(int)direction];
-    }
-
-    public void SetNeighbor(HexDirection direction, HexCell cell)
-    {
-        neighbors[(int)direction] = cell;
-        cell.neighbors[(int)direction.Opposite()] = this;
-    }
-
-    public HexEdgeType GetEdgeType(HexDirection direction)
-    {
-        return HexMetrics.GetEdgeType(elevation, neighbors[(int)direction].elevation);
-    }
-
-    public HexEdgeType GetEdgeType(HexCell otherCell)
-    {
-        return HexMetrics.GetEdgeType(elevation, otherCell.elevation);
-    }
     #endregion
 
     #region Road Properties
@@ -317,7 +296,9 @@ public class HexCell : MonoBehaviour {
 
     public void AddRoad(HexDirection directon)
     {
-        if (!roads[(int)directon] && !HasRiverThroughEdge(directon) && GetElevationDifference(directon) <= 1)
+        if (!roads[(int)directon] && !HasRiverThroughEdge(directon)
+            && !IsSpecial && !GetNeighbor(directon).IsSpecial 
+            && GetElevationDifference(directon) <= 1)
         {
             SetRoad((int)directon, true);
         }
@@ -380,6 +361,68 @@ public class HexCell : MonoBehaviour {
                 RefreshSelfOnly();
             }
         }
+    }
+    #endregion
+
+    #region Wall Properties
+    bool walled;
+    public bool Walled
+    {
+        get { return walled; }
+        set
+        {
+            if (walled != value)
+            {
+                walled = value;
+                Refresh();
+            }
+        }
+    }
+    #endregion
+
+    #region Special Properties
+    int specialIndex;
+    public int SpecialIndex
+    {
+        get { return specialIndex; }
+        set
+        {
+            if (specialIndex != value && !HasRiver)
+            {
+                specialIndex = value;
+                RemoveRoads();
+                RefreshSelfOnly();
+            }
+        }
+    }
+
+    public bool IsSpecial
+    {
+        get { return specialIndex > 0; }
+    }
+
+    #endregion
+
+    #region Neighbor/Edges
+    public HexCell GetNeighbor(HexDirection direction)
+    {
+        return neighbors[(int)direction];
+    }
+
+    public void SetNeighbor(HexDirection direction, HexCell cell)
+    {
+        neighbors[(int)direction] = cell;
+        cell.neighbors[(int)direction.Opposite()] = this;
+    }
+
+    public HexEdgeType GetEdgeType(HexDirection direction)
+    {
+        return HexMetrics.GetEdgeType(elevation, neighbors[(int)direction].elevation);
+    }
+
+    public HexEdgeType GetEdgeType(HexCell otherCell)
+    {
+        return HexMetrics.GetEdgeType(elevation, otherCell.elevation);
     }
     #endregion
 
