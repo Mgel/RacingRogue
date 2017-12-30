@@ -1,14 +1,11 @@
 ﻿using UnityEngine;
 using UnityEngine.UI;
 using UnityEngine.EventSystems;
+using System.IO;
 
 public class HexMapEditor : MonoBehaviour {
 
-    public Color[] colors;
     public HexGrid hexGrid;
-
-    private Color activeColor;
-    private bool applyColor;
 
     private bool applyElevation = true;
     private int activeElevation;
@@ -21,6 +18,8 @@ public class HexMapEditor : MonoBehaviour {
 
     private int brushSize;
 
+    private int activeTerrainTypeIndex;
+
     private enum OptionalToggle
     {
         Ignore, Add, Remove
@@ -30,12 +29,6 @@ public class HexMapEditor : MonoBehaviour {
     bool isDrag;
     HexDirection dragDirection;
     HexCell previousCell;
-
-
-    void Awake()
-    {
-        SelectColor(0);
-    }
 
     void Update()
     {
@@ -100,9 +93,9 @@ public class HexMapEditor : MonoBehaviour {
     {
         if (cell)
         {
-            if (applyColor)
+            if (activeTerrainTypeIndex >= 0)
             {
-                cell.Color = activeColor;
+                cell.TerrainTypeIndex = activeTerrainTypeIndex;
             }
             if (applyElevation)
             {
@@ -175,20 +168,10 @@ public class HexMapEditor : MonoBehaviour {
     }
 
     #region Editor Methods
-    public void SelectColor(int index)
-    {
-        applyColor = index >= 0;
-        if (applyColor)
-        {
-            activeColor = colors[index];
-        }        
-    }
-
     public void SetElevation(float elevation)
     {
         activeElevation = (int)elevation;
     }
-
     public void SetApplyElevation(bool toggle)
     {
         applyElevation = toggle;
@@ -223,7 +206,6 @@ public class HexMapEditor : MonoBehaviour {
     {
         activeWaterLevel = (int)level;
     }
-
     public void SetApplyWaterLevel(bool toggle)
     {
         applyWaterLevel = toggle;
@@ -233,7 +215,6 @@ public class HexMapEditor : MonoBehaviour {
     {
         applyUrbanLevel = toggle;
     }
-
     public void SetUrbanLevel (float level)
     {
         activeUrbanLevel = (int)level;
@@ -243,7 +224,6 @@ public class HexMapEditor : MonoBehaviour {
     {
         applyFarmLevel = toggle;
     }
-
     public void SetFarmLevel(float level)
     {
         activeFarmLevel = (int)level;
@@ -253,7 +233,6 @@ public class HexMapEditor : MonoBehaviour {
     {
         applyPlantLevel = toggle;
     }
-
     public void SetPlantLevel(float level)
     {
         activePlantLevel = (int)level;
@@ -263,11 +242,43 @@ public class HexMapEditor : MonoBehaviour {
     {
         applySpecialIndex = toggle;
     }
-
     public void SetSpecialIndex(float index)
     {
         activeSpecialIndex = (int)index;
     }
 
+    public void SetTerrainTypeIndex(int index)
+    {
+        activeTerrainTypeIndex = index;
+    }
+    #endregion
+
+    #region Saving/loading
+    public void Save()
+    {
+        string path = Path.Combine(Application.persistentDataPath, "test.map");
+        using (BinaryWriter writer = new BinaryWriter(File.Open(path, FileMode.Create)))
+        {
+            writer.Write(0);
+            hexGrid.Save(writer);
+        }
+    }
+
+    public void Load()
+    {
+        string path = Path.Combine(Application.persistentDataPath, "test.map");
+        using (BinaryReader reader = new BinaryReader(File.OpenRead(path)))
+        {
+            int header = reader.ReadInt32();
+            if (header == 0)
+            {
+                hexGrid.Load(reader);
+            }
+            else
+            {
+                Debug.LogWarning("Unknown map format " + header);
+            }
+        }
+    }
     #endregion
 }
