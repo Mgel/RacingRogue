@@ -121,12 +121,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Assets\Editor\HexCoordinatesDrawer.cs" />
+    <Compile Include="Assets\Editor\TextureArrayWizard.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Assets\HexMap\Shaders\Estuary.shader" />
     <None Include="Assets\HexMap\Shaders\River.shader" />
     <None Include="Assets\HexMap\Shaders\Road.shader" />
-    <None Include="Assets\HexMap\Shaders\VertexColors.shader" />
+    <None Include="Assets\HexMap\Shaders\Terrain.shader" />
     <None Include="Assets\HexMap\Shaders\Water Shore.shader" />
     <None Include="Assets\HexMap\Shaders\Water.cginc" />
     <None Include="Assets\HexMap\Shaders\Water.shader" />

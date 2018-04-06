@@ -52,8 +52,6 @@ public static class HexMetrics {
 
     public const float bridgeDesignLength = 7f;
 
-    public static Color[] colors;
-
     #region Corners
     // With a corner at top - pointy side up
     static Vector3[] corners =

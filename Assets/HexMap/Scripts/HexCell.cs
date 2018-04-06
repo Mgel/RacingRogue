@@ -33,11 +33,6 @@ public class HexCell : MonoBehaviour {
         }
     }
 
-    public Color Color
-    {
-        get { return HexMetrics.colors[terrainTypeIndex]; }
-    }
-
     private int elevation = int.MinValue;
     public int Elevation
     {
