@@ -13,8 +13,9 @@ public class HexMapCamera : MonoBehaviour {
     float zoom = 1f;
     float zoomAdjust;
     public float stickMinZoom, stickMaxZoom;
-    public float swivelMinZoom, swivelMaxZoom;
     public float moveSpeedMinZoom, moveSpeedMaxZoom;
+    public float maxPitch, minPitch;
+    public bool invertPitch;
 
     float yaw, pitch;
 
@@ -30,6 +31,18 @@ public class HexMapCamera : MonoBehaviour {
 
     void Update()
     {
+        float camDelta = Input.GetAxis("Fire2");
+        if (camDelta != 0f)
+        {
+            float yaw = Input.GetAxis("Mouse X");
+            float pitch = Input.GetAxis("Mouse Y");
+            if (yaw != 0f || pitch != 0f)
+            {
+                AdjustYaw(yaw);
+                AdjustPitch(pitch);
+            }
+        }
+
         float zoomDelta = Input.GetAxis("Mouse ScrollWheel");
         if (zoomDelta != 0f)
         {
@@ -39,7 +52,7 @@ public class HexMapCamera : MonoBehaviour {
         float rotationDelta = Input.GetAxis("Rotation");
         if (rotationDelta != 0f)
         {
-            AdjustRotation(rotationDelta);
+            AdjustYaw(rotationDelta);
         }
 
         float xDelta = Input.GetAxis("Horizontal");
@@ -58,19 +71,21 @@ public class HexMapCamera : MonoBehaviour {
     public static void ValidatePosition()
     {
         instance.AdjustPosition(0f, 0f);
+        instance.AdjustZoom(0f);
     }
 
     #region Zoom/Movement
     void AdjustZoom(float delta)
     {
         zoom = Mathf.Clamp01(zoom + delta);
-        float zoomAdjust = (float)(grid.cellCountX / 20.0f) / ((float)grid.cellCountX / (float)grid.cellCountZ);
+        float zoomAdjust = (grid.cellCountX / 20.0f) / (grid.cellCountX / (float)grid.cellCountZ);
 
         float distance = Mathf.Lerp(stickMinZoom * zoomAdjust, stickMaxZoom, zoom);
         stick.localPosition = new Vector3(0f, 0f, distance);
 
-        float angle = Mathf.Lerp(swivelMinZoom, swivelMaxZoom, zoom);
-        swivel.localRotation = Quaternion.Euler(angle, 0f, 0f);
+        // Adjust angle of camera when zooming
+        //float angle = Mathf.Lerp(maxPitch, minPitch, zoom);
+        //swivel.localRotation = Quaternion.Euler(angle, 0f, 0f);
     }
 
     void AdjustPosition(float xDelta, float zDelta)
@@ -97,14 +112,26 @@ public class HexMapCamera : MonoBehaviour {
     #endregion
 
     #region Rotation
-    void AdjustRotation(float delta)
+    void AdjustYaw(float delta)
     {
-        rotationAngle += delta * rotationSpeed * Time.deltaTime;
+        yaw += delta * rotationSpeed * Time.deltaTime;
 
-        if (rotationAngle < 0f) { rotationAngle += 360f; }
-        else if (rotationAngle >= 360f) { rotationAngle -= 360f; }
+        if (yaw < 0f) { yaw += 360f; }
+        else if (yaw >= 360f) { yaw -= 360f; }
 
-        transform.localRotation = Quaternion.Euler(0f, rotationAngle, 0f);
+        transform.localRotation = Quaternion.Euler(0f, yaw, 0f);
+    }
+
+    void AdjustPitch(float delta)
+    {        
+        if (invertPitch)
+        {
+            pitch -= delta * rotationSpeed * Time.deltaTime;
+        }
+        else { pitch += delta * rotationSpeed * Time.deltaTime; }
+
+        pitch = Mathf.Clamp(pitch, minPitch, maxPitch);
+        swivel.localRotation = Quaternion.Euler(pitch, 0f, 0f);
     }
     #endregion
 }

@@ -6,6 +6,7 @@ using System.IO;
 public class HexMapEditor : MonoBehaviour {
 
     public HexGrid hexGrid;
+    public Material terrainMaterial;
 
     private bool applyElevation = true;
     private int activeElevation;
@@ -15,6 +16,9 @@ public class HexMapEditor : MonoBehaviour {
 
     private bool applyUrbanLevel, applyFarmLevel, applyPlantLevel, applySpecialIndex;
     private int activeUrbanLevel, activeFarmLevel, activePlantLevel, activeSpecialIndex;
+
+    private bool gridVisible;
+    private bool editMode;
 
     private int brushSize;
 
@@ -28,7 +32,7 @@ public class HexMapEditor : MonoBehaviour {
 
     bool isDrag;
     HexDirection dragDirection;
-    HexCell previousCell;
+    HexCell previousCell, searchFromCell, searchToCell;
 
     void Update()
     {
@@ -41,6 +45,11 @@ public class HexMapEditor : MonoBehaviour {
         {
             previousCell = null;
         }
+    }
+
+    void Awake()
+    {
+        terrainMaterial.DisableKeyword("GRID_ON");
     }
 
     void HandleInput()
@@ -58,7 +67,34 @@ public class HexMapEditor : MonoBehaviour {
             {
                 isDrag = false;
             }
-            EditCells(currentCell);
+            if (editMode)
+            {
+                EditCells(currentCell);
+            }
+            else if (Input.GetKey(KeyCode.LeftShift) && searchToCell != currentCell)
+            {
+                if (searchFromCell != currentCell)
+                {
+                    if (searchFromCell)
+                    {
+                        searchFromCell.DisableHighlight();
+                    }
+                    searchFromCell = currentCell;
+                    searchFromCell.EnableHighlight(Color.blue);
+                    if (searchToCell)
+                    {
+                        hexGrid.FindPath(searchFromCell, searchToCell, 24);
+                    }
+                }
+            }
+            else if (searchFromCell && searchFromCell != currentCell)
+            {
+                if (searchToCell != currentCell)
+                {
+                    searchToCell = currentCell;
+                    hexGrid.FindPath(searchFromCell, searchToCell, 24);
+                }
+            }
             previousCell = currentCell;
             isDrag = true;
         }
@@ -182,10 +218,10 @@ public class HexMapEditor : MonoBehaviour {
         brushSize = (int)size;
     }
 
-    public void ShowUI(bool visible)
-    {
-        hexGrid.ShowUI(visible);
-    }
+    //public void ShowUI(bool visible)
+    //{
+    //    hexGrid.ShowUI(visible);
+    //}
 
     public void SetRiverMode(int mode)
     {
@@ -250,6 +286,24 @@ public class HexMapEditor : MonoBehaviour {
     public void SetTerrainTypeIndex(int index)
     {
         activeTerrainTypeIndex = index;
+    }
+
+    public void ShowGrid(bool visible)
+    {
+        if (visible)
+        {
+            terrainMaterial.EnableKeyword("GRID_ON");
+        }
+        else
+        {
+            terrainMaterial.DisableKeyword("GRID_ON");
+        }        
+    }
+
+    public void SetEditMode (bool toggle)
+    {
+        editMode = toggle;
+        hexGrid.ShowUI(!toggle);
     }
     #endregion
 }
